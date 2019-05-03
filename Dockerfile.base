@@ -26,6 +26,7 @@ RUN apt-get clean && \
     wget \
     curl \
     tmux \
+    man-db \
     ros-$ROS_DISTRO-rqt-tf-tree \
     ros-$ROS_DISTRO-node-manager-fkie && \ 
 #    ros-$ROS_DISTRO-mongodb-store && \
@@ -36,12 +37,12 @@ RUN apt-get clean && \
     cd ~/catkin_ws && \
     catkin init && \
     catkin build && \
+    echo "source /opt/ros/$ROS_DISTRO/setup.bash" && \
     echo "source ~/catkin_ws/devel/setup.bash" >> ~/.bashrc && \
 
 # axcli to trigger actions
     cd ~/catkin_ws/src && \
     git clone https://github.com/po1/axcli.git
-
 RUN apt-get -y install bash-completion ros-$ROS_DISTRO-rviz
 
 # https://wiki.ubuntuusers.de/Bash/Prompt/
