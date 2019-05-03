@@ -3,12 +3,6 @@ FROM $DOCKER_BASE_IMAGE
 ARG ROS_DISTRO=kinetic
 ENV DEBIAN_FRONTEND noninteractive
 
-#RUN apt-get remove libgazebo* gazebo* && \
-#    echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list && \
-#    wget http://packages.osrfoundation.org/gazebo.key -O - | apt-key add - && \
-#    apt-get update && \
-#    apt-get install -y gazebo10 libgazebo10-dev
-
 RUN apt-get update && \
     apt-get install -y \
       ros-$ROS_DISTRO-gazebo-* \
@@ -23,10 +17,11 @@ RUN apt-get update && \
       ros-$ROS_DISTRO-tf2-geometry-msgs \
       ros-$ROS_DISTRO-map-server \
       ros-$ROS_DISTRO-amcl \
-      ros-$ROS_DISTRO-ros-controllers \
+      # ros-$ROS_DISTRO-ros-controllers \
       ros-$ROS_DISTRO-joint* \
       ros-$ROS_DISTRO-ros-control \
-      ros-$ROS_DISTRO-rqt-controller-manager
+      ros-$ROS_DISTRO-rqt-controller-manager \
+      ros-$ROS_DISTRO-position-controllers
      
 RUN apt install build-essential cmake git libpoco-dev libeigen3-dev && \
     cd ~ && \
@@ -34,10 +29,12 @@ RUN apt install build-essential cmake git libpoco-dev libeigen3-dev && \
     cd libfranka && \
     mkdir build && \
     cd build && \
-    cmake -DCMAKE_BUILD_TYPE=Release .. && \
-    cmake --build . && make install
+    cmake -DCMAKE_BUILD_TYPE=Release .. && \  
+    ncpu=$(grep -c ^processor /proc/cpuinfo) && \
+    njobs=$(expr $ncpu - 1) && \
+    make -j$njobs && make install
     # && cd ~ && / rm -r libfranka
-ADD iwtros_framework /root/catkin_ws/src/iwtros_framework
+COPY ./tmp_iwtros_framework /root/catkin_ws/src/iwtros_framework
 
 RUN cd /root/catkin_ws && \
     catkin init && catkin build iwtros_msgs && catkin build
