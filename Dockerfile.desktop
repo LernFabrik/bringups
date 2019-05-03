@@ -1,0 +1,11 @@
+ARG DOCKER_BASE_IMAGE=ros-melodic:base
+FROM $DOCKER_BASE_IMAGE
+ARG ROS_DISTRO=melodic
+ENV DEBIAN_FRONTEND noninteractive
+
+RUN apt-get install -y ros-$ROS_DISTRO-desktop
+
+# change [Name] to images or container name
+ARG CONTAINER_NAME=ros:melodic-desktop
+RUN sed -i "s/{$DOCKER_BASE_IMAGE}/{$CONTAINER_NAME}/g" ~/.bashrc
+

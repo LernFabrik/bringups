@@ -1,0 +1,23 @@
+version: '3.2'
+services:
+ ros-melodic-iwtros:
+    image: ros:melodic-iwtros
+    environment:
+     # ROS_IP: $ROS_IP
+      ROS_MASTER_URI: $ROS_MASTER_URI
+      DISPLAY: :0
+      QT_X11_NO_MITSHM: '1'
+    stdin_open: true
+    network_mode: host
+    volumes:
+      - $HOME/exchange:/root/exchange
+      - $HOME/iwtros_ws/src:/root/catkin_ws/src
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - $HOME/.Xauthority:/root/.Xauthority
+        # user: ${CURRENT_UID}
+    privileged: true
+    devices:
+    - /dev/bus/usb:/dev/bus/usb
+    tty: true
+    command: tail -f /dev/null 
+

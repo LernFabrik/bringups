@@ -1,0 +1,54 @@
+ARG DOCKER_BASE_IMAGE=ros:melodic-robot
+FROM $DOCKER_BASE_IMAGE
+
+ARG ROS_DISTRO=melodic
+
+ENV DEBIAN_FRONTEND noninteractive
+
+#default behaviour
+ENV WAIT_FOR_ROSCORE 0
+ENV WAIT_FOR_CONFIG_MANAGER 0
+
+#use bash shell
+RUN rm /bin/sh && ln -s /bin/bash /bin/sh
+
+#install system stuff
+RUN apt-get clean && \
+    apt-get update && apt-get -y install \
+    htop \
+    build-essential \
+    apt-utils \
+    python-pip \
+    python-ipdb \
+    ssh \
+    git \
+    vim \
+    wget \
+    curl \
+    tmux \
+    ros-$ROS_DISTRO-rqt-tf-tree \
+    ros-$ROS_DISTRO-node-manager-fkie && \ 
+#    ros-$ROS_DISTRO-mongodb-store && \
+    pip install -U catkin_tools && \
+# create catkin_ws
+    source /opt/ros/$ROS_DISTRO/setup.bash && \
+    mkdir -p /root/catkin_ws/src && \
+    cd ~/catkin_ws && \
+    catkin init && \
+    catkin build && \
+    echo "source ~/catkin_ws/devel/setup.bash" >> ~/.bashrc && \
+
+# axcli to trigger actions
+    cd ~/catkin_ws/src && \
+    git clone https://github.com/po1/axcli.git
+
+RUN apt-get -y install bash-completion ros-$ROS_DISTRO-rviz
+
+# https://wiki.ubuntuusers.de/Bash/Prompt/
+#    echo "PS1='🐳  \[\033[1;36m\]\h \[\033[1;34m\]\W\[\033[0;35m\] \[\033[1;36m\]# \[\033[0m\]'" >> /root/.bashrc
+
+ARG CONTAINER_NAME=ros:melodic-base
+
+RUN echo "export PS1='\[\e[1;32m\]$CONTAINER_NAME\[\e[m\e[1;39m\]@\[\e[m\e[1;36m\]\h \[\e[1;34m\]\W\[\e[m\]$ '" >> ~/.bashrc
+# change [Name] to images or container name
+RUN echo "source ~/catkin_ws/devel/setup.bash" >> ~/.bashrc 
