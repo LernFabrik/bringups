@@ -8,7 +8,8 @@ ENV DEBIAN_FRONTEND noninteractive
 #default behaviour
 ENV WAIT_FOR_ROSCORE 0
 ENV WAIT_FOR_CONFIG_MANAGER 0
-
+ENV HOME=/root
+WORKDIR /root 
 #use bash shell
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 
@@ -33,15 +34,15 @@ RUN apt-get clean && \
     pip install -U catkin_tools && \
 # create catkin_ws
     source /opt/ros/$ROS_DISTRO/setup.bash && \
-    mkdir -p /root/catkin_ws/src && \
-    cd ~/catkin_ws && \
+    mkdir -p $HOME/catkin_ws/src && \
+    cd $HOME/catkin_ws && \
     catkin init && \
     catkin build && \
     echo "source /opt/ros/$ROS_DISTRO/setup.bash" && \
-    echo "source ~/catkin_ws/devel/setup.bash" >> ~/.bashrc && \
+    echo "source $HOME/catkin_ws/devel/setup.bash" >> $HOME/.bashrc && \
 
 # axcli to trigger actions
-    cd ~/catkin_ws/src && \
+    cd $HOME/catkin_ws/src && \
     git clone https://github.com/po1/axcli.git
 RUN apt-get -y install bash-completion ros-$ROS_DISTRO-rviz
 
@@ -50,6 +51,6 @@ RUN apt-get -y install bash-completion ros-$ROS_DISTRO-rviz
 
 ARG CONTAINER_NAME=ros:melodic-base
 
-RUN echo "export PS1='\[\e[1;32m\]$CONTAINER_NAME\[\e[m\e[1;39m\]@\[\e[m\e[1;36m\]\h \[\e[1;34m\]\W\[\e[m\]$ '" >> ~/.bashrc
+RUN echo "export PS1='\[\e[1;32m\]$CONTAINER_NAME\[\e[m\e[1;39m\]@\[\e[m\e[1;36m\]\h \[\e[1;34m\]\W\[\e[m\]$ '" >> $HOME/.bashrc
 # change [Name] to images or container name
-RUN echo "source ~/catkin_ws/devel/setup.bash" >> ~/.bashrc 
+RUN echo "source ~/catkin_ws/devel/setup.bash" >> $HOME/.bashrc 
