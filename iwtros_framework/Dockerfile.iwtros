@@ -45,4 +45,4 @@ ARG CONTAINER_NAME=iwtros
 # RUN sed -i "s/${DOCKER_BASE_IMAGE}/${CONTAINER_NAME}/g" ~/.bashrc
 RUN sed -i "s/ros:melodic-base/${CONTAINER_NAME}/g" ~/.bashrc
 
-RUN sed -i "s/https:\/\/api.ignitionfuel.org/https:\/\/api.ignitionrobotics.org/g" $HOME/.ignition/fuel/config.yaml
+RUN echo "sed -i 's/https:\/\/api.ignitionfuel.org/https:\/\/api.ignitionrobotics.org/g' $HOME/.ignition/fuel/config.yaml" >> $HOME/.bashrc
